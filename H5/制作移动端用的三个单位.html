@@ -1,0 +1,383 @@
+第二单元
+sass的变量声明
+变量是用$来声明
+变量与值之间用 冒号(:) 来写的
+
+制作移动端用的三个单位
+rem 相对单位
+em 相对单位
+px 绝对单位
+
+在移动端里面一般文字是16px,
+html,body{
+	font-size:62.5%;
+	1rem=10px;
+	16px
+	1.6rem
+}
+
+属性嵌套
+eg:footer{
+	background:#CCC;
+	border:{
+		width:1rem;
+		color:blue;
+		style:dashed;
+	}
+}
+注意：属性与属性的嵌套必须是属性
+伪类嵌套
+.box{
+	&:after{
+		content:"mary";
+	}
+	&:hover{
+	color:red;
+	}
+}
+注意：&代表当前父元素/当前元素
+
+sass的注释方法
+第一种：//在生成的css文件中不被看到的
+第二种： /* */ 在生成的css文件中被看到
+
+混合宏
+sass种中的混合宏用@mixin来声明，通过@include来调用
+eg: @mixin list{
+	width:px;
+	height:100px;
+	background:#FF0;
+}
+.box{
+	@include list;
+}
+混合宏中可以传递变量，变量与变量之间用逗号隔开
+调用混合宏是用@include，传递参数与参数是用逗号隔开
+eg:@mixin box($w){
+	width:$w;
+	height:200px;
+	background:red;
+}
+.box{
+	@include box(100px);
+或者  @mixin box($w:100px){
+	width:$w;
+	height:200px;
+	background:red;
+}
+.box{
+	@include box;
+或者@mixin box($w,$h){
+	width:$w;
+	height:200px;
+	background:red;
+}
+.box{
+	@include box(100px,200px);
+
+
+sass(中)
+继承
+他首先得声明一个基类，然后通过@extend来调用
+他可以让一个选择器继承另一个选择器的所有样式
+好处：减少了代码的重复量
+特点：声明之后，不调用，他也会出现在我们生成的css样式中
+eg:.tes{
+	width:500px;
+	height:200px;
+	border:{
+		style:double;
+		width:10px;
+		color:red;
+	}
+}
+.box{
+	@extend .tes;
+}
+
+
+占位符  %placeholder
+声明占位符用%
+调用占位符用的是@extend
+他的优势在于：声明之后，如果不调用，他的代码不会出现在生成的css样式中
+eg: %name{
+	width:200px;
+	height:200px;
+	background:pink;
+}
+footer{
+	@extend %name;
+}
+
+
+插值
+#{}
+好处：减少代码的长度
+eg: $bg:background;
+footer{
+	#{$bg}-color:orange;
+}
+
+数值的类型
+number 数字
+string 字符串
+color 颜色
+boolen 布尔型{false/true}
+null 空
+值列表(值与值之间用逗号隔开)
+他可以通过#{length(变量)}来获取他的长度，取其中的值用的是nth($colors,5)
+eg:$colors:pink blue yellow orange red;
+footer{
+	&:after{
+		content:"#{length($colors)}";
+		color:nth($colors,1);
+	}
+}
+
+sass的运算加减乘除
+加
+变量与变量相加
+$w:100px;
+$h:200px;
+footer{
+	height:$w+$h;
+}
+
+变量与纯数字相加
+footer{
+	height:$h+20;
+}
+
+纯数字与纯数字相加，结果是纯数字
+footer{
+	height:20+20+100;
+}
+
+带单位的数字与带单位的数字也可以相加
+footer{
+	height:20px+20px+100px;
+}
+
+减号
+变量与变量之间或者值与值之间必须用空格隔开相减,与加号同理
+eg：20 - 10
+
+乘法
+注：值与值之间相乘，不能都是带有单位的数字相乘
+eg:
+	$w:100;
+	$h:200px;
+	footer{
+		width:$w*$h;
+	}
+
+除法
+除法需要括号括起来
+eg:(10/2)
+带单位的与带单位的相除，变成纯数字，在与上同理
+
+颜色运算
+
+字符运算
+
+
+sass进阶(下)
+@if判断
+	@if里面分别用==/!=来表示等于和不等于
+	p{
+		@if 1+1==3{
+			如果条件为真，执行的代码
+		}@else{
+			如果条件为假，执行的代码
+		}
+	}
+
+@for循环
+	@for循环有两种语句，分别为：
+		@for $var from start to end{
+
+		}
+		@for $var from start through end，{
+
+		}
+		$var是来声明一个变量，start是我们的起始值，end表示结束值，这两个的区别是：
+		 前者不包括end，后者包括end
+
+@while循环
+	$i:6;
+	@while $i>0{
+		.box#{$i}{
+			border:1px solid red;
+		}
+	}
+
+each循环
+
+transition与transform 上
+
+transition用于实现的是平滑过渡动画(必须有事件触发才可以执行)
+
+第一个参数是：
+	动画的属性
+	transition-property  第一个参数，过渡的属性
+
+第二个参数是：
+	动画需要的时间
+	transition-duration  第二个参数，动画时间的具体时长(单位：s)
+
+第三个参数是
+	过渡的类型
+	transition-timing-function  第三个参数(指的是动画的类型/过渡方式)
+		linear 匀速运动，从头到尾运动的速度是相同的
+		ease 默认，动画从慢速开始运动
+		ease-in 动画由低速开始运动(从慢到快)
+		ease-out 从快开始到慢
+		ease-in-out 从低速开始到快到慢
+
+transform
+变形-旋转rotate
+	旋转的是角度，单位：deg
+变形-缩放scale  第一个值宽(X轴)，第一个值高度(Y轴)
+	scale3D()
+变形-倾斜skew
+	第一个值代表的X轴，第二个值代表的是Y轴
+变形-位移translate(x,y)
+变形-原点transform-origin
+	起点位置
+
+
+第六单元 (下)
+animation动画
+	animation是自执行动画，不需要事件去触发
+		name 第一个参数是动画名称
+		动画时间
+		动画类型
+		动画开始前的延时 animation-delay
+		动画执行的次数 animation-iteration-count:infinite
+			它可以是纯数字，也可以定义成infinite重复执行
+		动画执行的方向 animation-direction
+			normal 默认 ，方向始终向前
+			alternate 当重复次数为偶数是方向向前，基数时方向相反
+
+	引用动画是@keyframes 关键帧
+	三个帧  @keyframes (一)  from==0%(二/起始帧)
+			to==100%(三/结束帧)	
+			它可以分别定义不同时间段的运动	
+
+第七单元
+animated 动画库
+animate介绍
+animate.css是一个国外的css3动画库，他包含了抖动(shake),闪烁(flash)，弹跳(bounce)，翻转(flip)，旋转(rotateIn/rotateOut)，淡入淡出(fadeIn/fadeOut)等多达60多种动画效果！
+好处：方便快捷！
+
+兼容IE10+，Firefox，Chrome，Opear，Safari
+
+使用方法
+1.可以通过link来引入animate文件
+2.可以通过自己打开animate.css源文件，把自己想要的动画复制粘贴在自己的scss里面
+
+animation-direction：用来指定元素动画播放的方向，当设置为alternate，他的作用是：动画播放在第偶数次向前播放，第基数次向反方向播放
+
+第八单元
+iconfont 字体图标
+字体格式
+ttf  mac/windows
+eot  IE
+woff  web端
+svg  谷歌和苹果
+
+第一步
+	通过@font-face声明字体图标
+	@font-face里面两个属性是必须的
+		font-family 字体库的名字(任何)
+		src 字体图标上传服务器，路径通过url
+		注:字体图标的四种格式都写
+			src:url(../fonts/iconfont.ttf),
+				url(../fonts/iconfont.eot),
+				url(../fonts/iconfont.woff),
+				url(../fonts/iconfont.svg);
+第二步
+	调用/引用字体库
+	div{
+		font-family:上传的文件名字;
+	}
+
+注:凡是给字体能够定义的样式都可以定义在字体图标上
+
+
+第三步
+	挑选相应图标并获取字体编码，应用于页面
+	<i class="iconfont">&#x33;</i>
+
+
+字体图标在html中使用
+	原编码是\e665;
+	在html中使用需要把 \ 转义 &#x
+
+第九单元 多列布局 columns
+语法 column-span:none | all
+	默认是none
+	取值 none 不跨列
+		 all 横跨所有列，独占一行
+
+语法 column-count:number | auto
+	默认值是 auto
+	number 用整数值来定义列的宽度，不允许是负值
+	auto 根据column-width来自定义分配宽度
+
+语法 column-width:length | auto	
+	默认auto
+	length 用长度来定义列宽，不允许是负值
+	auto 跟据column-count自定义分配宽度
+
+语法 column-rule:线型 颜色 大小
+
+语法 column-gap:length | normal
+	length 定义的是列与列之间的间距/间隙
+
+语法 column:column-width | column-count
+	column-width设置或者检索对象的每一列的宽度
+	column-count 设置或者检索对象的列数
+
+第十单元 弹性盒flex(上)
+	旧 display:box;
+	新 display:flex;
+
+	给父元素添加弹性盒display:flex属性,子元素是并行显示
+	让子元素在父元素中横向居中
+	//设置或检索弹性盒子元素在主轴（横轴）方向上的对齐方式
+		justify-content:center
+		justify-content:flex-start  默认值 从左边开始的
+		justify-content:flex-end 
+		justify-content:space-between 两端对齐
+		justify-content:space-around 弹性盒子两端保留的是元素与元素之间的二分之一的宽度	
+
+
+
+	让子元素在父元素中纵向居中
+		align-items:center;
+		align-items:flex-start; 默认值
+		align-items:flex-end
+	
+	cursor:pointer;
+	鼠标滑过/点击的时候箭头变成小手
+
+	cursor:move;
+	拖拽,拉动的状态
+
+	cursor:wait;
+	加载时候的状态
+
+	祖先元素添加弹性盒，子元素都是一行显示
+	flex-direction:
+		row 水平排列
+		column 垂直排列
+
+
+
+
+
+
+
+
+

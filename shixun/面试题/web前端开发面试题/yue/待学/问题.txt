@@ -1,0 +1,178 @@
+4，IE 与 FF 脚本兼容性问题
+(1) window.event：
+表示当前的事件对象，IE 有这个对象，FF 没有，FF 通过给事件处理函数传递事件对象
+(2) 获取事件源
+IE 用 srcElement 获取事件源，而 FF 用 target 获取事件源
+(3) 添加，去除事件
+IE： element.attachEvent(“onclick”, function) element.detachEvent(“onclick”,
+function)
+FF：element.addEventListener(“click”, function, true)
+element.removeEventListener(“click”, function, true)
+(4) 获取标签的自定义属性
+IE：div1.value 或 div1[“value”]
+FF：可用 div1.getAttribute(“value”)
+(5) document.getElementByName()和 document.all[name]
+IE;document.getElementByName()和 document.all[name]均不能获取 div 元素
+FF：可以
+(6) input.type 的属性
+IE：input.type 只读
+FF：input.type 可读写
+(7) innerText textContent outerHTML
+IE：支持 innerText, outerHTML
+FF：支持 textContent
+(8) 是否可用 id 代替 HTML 元素
+IE：可以用 id 来代替 HTML 元素
+FF：不可以
+这里只列出了常见的， 还有不少， 更多的介绍可以参看JavaScript在IE浏览器和Firefox
+浏览器中的差异总结
+
+
+
+
+8，编写一个方法 求一个字符串的字节长度
+假设：
+一个英文字符占用一个字节，一个中文字符占用两个字节
+function GetBytes(str){
+var len = str.length;
+var bytes = len;
+for(var i=0; i
+if (str.charCodeAt(i) > 255) bytes++;
+}
+return bytes;
+}
+alert(GetBytes("你好,as"));
+
+
+10，写出3个使用 this 的典型应用
+(1)在 html 元素事件属性中使用，如
+(2)构造函数
+function Animal(name, color) {
+this.name = name;
+this.color = color;
+}
+(3)
+(4)CSS expression 表达式中使用 this 关键字
+div element
+
+
+22，ajax 是什么? ajax 的交互模型? 同步和异步的区别? 如何解决跨域问题?
+Ajax 是多种技术组合起来的一种浏览器和服务器交互技术，基本思想是允许一个互联
+网浏览器向一个远程页面/服务做异步的 http 调用， 并且用收到的数据来更新一个当前 web
+页面而不必刷新整个页面。该技术能够改进客户端的体验。包含的技术：
+XHTML：对应 W3C 的 XHTML 规范，目前是 XHTML1.0。
+CSS：对应 W3C 的 CSS 规范，目前是 CSS2.0
+DOM：这里的 DOM 主要是指 HTML DOM，XML DOM 包括在下面的 XML 中
+JavaScript：对应于 ECMA 的 ECMAScript 规范
+XML：对应 W3C 的 XML DOM、XSLT、XPath 等等规范
+XMLHttpRequest：对应 WhatWG 的 Web Applications1.0规范
+(http://whatwg.org/specs/web-apps/current-work/)
+AJAX 交互模型
+同步：脚本会停留并等待服务器发送回复然后再继续
+异步：脚本允许页面继续其进程并处理可能的回复
+跨域问题简单的理解就是因为 JS 同源策略的限制， a.com 域名下的 JS 无法操作 b.com
+或 c.a.com 下的对象，具体场景如下：
+PS：(1)如果是端口或者协议造成的跨域问题前端是无能为力的
+(2) 在跨域问题上，域仅仅通过 URL 的首部来识别而不会尝试判断相同的 IP 地址对应
+的域或者两个域是否对应一个 IP
+前端对于跨域的解决办法：
+(1) document.domain+iframe
+(2) 动态创建 script 标签
+
+24，请给出异步加载 js 方案，不少于两种
+默认情况 javascript 是同步加载的， 也就是 javascript 的加载时阻塞的， 后面的元素要
+等待 javascript 加载完毕后才能进行再加载，对于一些意义不是很大的 javascript，如果放
+在页头会导致加载很慢的话，是会严重影响用户体验的。
+异步加载方式：
+(1) defer，只支持 IE
+(2) async：
+(3) 创建 script，插入到 DOM 中，加载完毕后 callBack，见代码：
+function loadScript(url, callback){
+var script = document.createElement("script")
+script.type = "text/javascript";
+if (script.readyState){ //IE
+script.onreadystatechange = function(){
+if (script.readyState == "loaded" ||
+script.readyState == "complete"){
+script.onreadystatechange = null;
+callback();
+}
+};
+} else { //Others: Firefox, Safari, Chrome, and Opera
+script.onload = function(){
+callback();
+};
+}
+script.src = url;
+document.body.appendChild(script);
+}
+
+25，请设计一套方案，用于确保页面中 JS 加载完全。
+var n = document.createElement("script");
+n.type = "text/javascript";
+//以上省略部分代码
+//ie 支持 script 的 readystatechange 属性(IE support the readystatechange event
+for script and css nodes)
+if(ua.ie){
+n.onreadystatechange = function(){
+var rs = this.readyState;
+if('loaded' === rs || 'complete'===rs){
+n.onreadystatechange = null;
+f(id,url); //回调函数
+}
+};
+//省略部分代码
+//safari 3.x supports the load event for script nodes(DOM2)
+n.addEventListener('load',function(){
+f(id,url);
+});
+//firefox and opera support onload(but not dom2 in ff) handlers for
+//script nodes. opera, but no ff, support the onload event for link
+//nodes.
+}else{
+n.onload = function(){
+f(id,url);
+};
+}
+
+33，Flash、Ajax 各自的优缺点，在使用中如何取舍?
+Ajax 的优势
+(1) 可搜索型
+(2) 开放性
+(3) 费用
+(4) 易用性
+(5) 易于开发
+Flash 的优势
+(1) 多媒体处理
+(2) 兼容性
+(3) 矢量图形 比 SVG，Canvas 优势大很多
+(4) 客户端资源调度，比如麦克风，摄像头
+
+3. CSS 引入的方式有哪些? link 和@import 的区别是?
+
+4. CSS 选择符有哪些？哪些属性可以继承？优先级算法如何计算？内联和 important 哪个
+优先级高？
+
+6. css 的基本语句构成是？
+
+8. 如何居中一个浮动元素?
+11. 如果让你来制作一个访问量很高的大型网站，你会如何来管理所有 CSS 文件、JS 与图片？
+
+12. 你对前端界面工程师这个职位是怎么样理解的？它的前景会怎么样？
+
+5.	异步ajax的优缺点
+优点：
+?	相对于同步ajax：不会造成UI卡死，用户体验好。
+?	相对于刷新页面，省流量
+缺点：
+?	后退按钮无效；
+?	多个请求同时触发时，由于回调时间不确定，会造成混乱，避免这种混乱需要复杂的判断机制。
+?	搜索引擎不友好
+?	数据安全
+
+
+
+
+
+
+
+
